@@ -1,0 +1,26 @@
+name: Generate Index Folder
+on:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  generate-index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout current repository
+        uses: actions/checkout@v4
+      - name: Clone crates.io-index repository
+        run: git clone https://github.com/rust-lang/crates.io-index.git crates-io-index
+      - name: Run
+        run: |
+          chmod +x generate
+          ./generate
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Github Action
+          author_email: action@github.com
+          message: Update crate index
+          add: index/*.json
