@@ -15,9 +15,16 @@ use serde_json::Value;
 struct Ver {
     name: String,
     vers: String,
+    deps: Vec<Dep>,
     features: HashMap<String, Value>,
     features2: Option<HashMap<String, Value>>,
     yanked: bool,
+}
+
+#[derive(Deserialize)]
+struct Dep {
+    name: String,
+    optional: bool,
 }
 
 fn read_files_in_directory(
@@ -50,6 +57,14 @@ fn read_files_in_directory(
                         .map(|item| {
                             let mut features =
                                 item.features.into_iter().map(|v| v.0).collect::<Vec<_>>();
+                            features.append(
+                                &mut item
+                                    .deps
+                                    .into_iter()
+                                    .filter(|v| v.optional)
+                                    .map(|v| v.name)
+                                    .collect(),
+                            );
                             features.append(
                                 &mut item
                                     .features2
