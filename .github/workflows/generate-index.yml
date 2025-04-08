@@ -1,7 +1,4 @@
 name: Generate Index Folder
-on:
-  schedule:
-    - cron: "0 0 * * *"
 
 jobs:
   generate-index:
